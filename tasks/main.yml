@@ -1,20 +1,16 @@
----
-# intall needed application 
+# tasks/main.yml
+
 - name: Update and upgrade the OS
   apt:
-    update_cache: yes 
+    update_cache: yes
     upgrade: dist
   register: upgrade_result
-
-- name: Reboot if the OS was upgraded 
-  reboot:
-  when: upgrade_result.changed
 
 - name: Install required software
   apt:
     name: "{{ bootstrap_install_list }}"
     state: present
-# create wheel group 
+
 - name: Ensure wheel group exists
   group:
     name: wheel
@@ -32,13 +28,13 @@
     regexp: '^%wheel'
     line: '%wheel ALL=(ALL) NOPASSWD: ALL'
     validate: 'visudo -cf %s'
-# create user 
+
 - name: Create the bootstrap admin user
   user:
     name: "{{ bootstrap_admin_user }}"
     groups: "wheel,docker,users"
-    append: yes 
-    create_home: yes 
+    append: yes
+    create_home: yes
     shell: /bin/bash
     state: present
 
@@ -56,7 +52,6 @@
     owner: "{{ bootstrap_admin_user }}"
     group: "{{ bootstrap_admin_user }}"
     mode: '0700'
-  notify: restart ssh
 
 - name: Create authorized keys file from template
   template:
@@ -65,7 +60,6 @@
     owner: "{{ bootstrap_admin_user }}"
     group: "{{ bootstrap_admin_user }}"
     mode: '0644'
-  notify: restart ssh
 
 - name: Create authorized keys file in current user's home directory
   template:
@@ -74,9 +68,8 @@
     owner: "{{ ansible_env.USER }}"
     group: "{{ ansible_env.USER }}"
     mode: '0644'
-  notify: restart ssh
 
-- name: Disable root login and password login in SSH
+- name: Ensure SSH changes are correct
   template:
     src: sshd_config.j2
     dest: /etc/ssh/sshd_config
@@ -84,3 +77,7 @@
     group: root
     mode: '0644'
   notify: restart ssh
+
+  - name: reboot if needed
+    reboot:
+    when: upgrade_result.changed and ansible_distribution != 'localhost'
