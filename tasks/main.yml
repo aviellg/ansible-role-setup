@@ -16,10 +16,10 @@
     name: wheel
     state: present
 
-#- name: Ensure users group exists
- # group:
-  #  name: users
-   # state: present
+- name: Ensure users group exists
+  group:
+    name: users
+    state: present
 
 - name: Ensure docker group exists
   group:
@@ -83,6 +83,15 @@
     mode: '0644'
   notify: restart ssh
 
-- name: reboot if needed 
-  reboot: 
-    when: upgrade_result.changed and ansible_distribution !=
+- name: Debug - Display upgrade result
+  debug:
+    var: upgrade_result
+
+- name: Debug - Display ansible_distribution
+  debug:
+    var: ansible_distribution
+
+- name: Notify if reboot is needed
+  debug:
+    msg: "Reboot required to apply updates."
+  when: upgrade_result.changed
