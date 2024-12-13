@@ -16,10 +16,10 @@
     name: wheel
     state: present
 
-- name: Ensure users group exists
-  group:
-    name: users
-    state: present
+#- name: Ensure users group exists
+ # group:
+  #  name: users
+   # state: present
 
 - name: Ensure docker group exists
   group:
