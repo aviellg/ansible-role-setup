@@ -83,6 +83,6 @@
     mode: '0644'
   notify: restart ssh
 
-  - name: reboot if needed
-    reboot:
-    when: upgrade_result.changed and ansible_distribution != 'localhost'
+- name: reboot if needed 
+  reboot: 
+    when: upgrade_result.changed and ansible_distribution !=
