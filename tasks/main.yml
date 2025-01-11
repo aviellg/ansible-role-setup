@@ -36,7 +36,6 @@
   user:
     name: "{{ bootstrap_admin_user }}"
     groups: "wheel,docker,users"
-    password: "{{ bootstrap_admin_password }}"  # Add password variable
     append: yes
     create_home: yes
     shell: /bin/bash
