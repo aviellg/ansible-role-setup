@@ -1,5 +1,3 @@
-# tasks/main.yml
-
 - name: Update and upgrade the OS
   apt:
     update_cache: yes
@@ -38,6 +36,7 @@
   user:
     name: "{{ bootstrap_admin_user }}"
     groups: "wheel,docker,users"
+    password: "{{ bootstrap_admin_password }}"  # Add password variable
     append: yes
     create_home: yes
     shell: /bin/bash
@@ -94,4 +93,4 @@
 - name: Notify if reboot is needed
   debug:
     msg: "Reboot required to apply updates."
-  when: upgrade_result.changed
+  when: upgrade_result.changed 
